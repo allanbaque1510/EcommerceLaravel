@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('carrito', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_session')->unique(); // Identificador de sesión
+            
+            $table->unsignedBigInteger('id_usuario');
+            $table->foreign('id_usuario')->references('id')->on('users');
+            $table->tinyInteger('estado')->default(1);
+
             $table->timestamps();
         });
 
@@ -24,6 +28,7 @@ return new class extends Migration
             $table->integer('cantidad')->default(1);
             $table->foreign('id_carrito')->references('id')->on('carrito')->onDelete('cascade'); // Para enlazarlo cuando inicie sesión
             $table->foreign('id_producto')->references('id')->on('productos')->onDelete('cascade'); // Para enlazarlo cuando inicie sesión
+            $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@ class Carrito extends Model
     use HasFactory;
     protected $table = "carrito";
     protected $fillable = [
-        "id_session",
+        "id_usuario",
+        "estado",
     ];
 }

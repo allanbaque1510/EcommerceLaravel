@@ -2,10 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CarritoController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/session', [AuthController::class,'createAnonymousSession']);
@@ -16,6 +12,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [AuthController::class, 'getUser']);
     Route::get('/logout', [AuthController::class,'cerrarSession']);
     Route::get('/verifyToken', [AuthController::class,'verificarToken']);
-    Route::post('/save_product',[CarritoController::class,'saveProductsInSession']);
 });
+Route::post('/save_product',[CarritoController::class,'saveProductsCarrito']);
 

@@ -54,27 +54,16 @@ class AuthController extends Controller
                     // Encriptar la data antes de enviarla
                     return response()->json([
                         "ok" => true,
-                        'data' => $this->encriptarData($user_log)
+                        'data' => encriptarDataJson($user_log)
                     ]);
                 } else {
-                    return response()->json([
-                        "ok" => false,
-                        "message" => "Usuario no encontrado"
-                    ],401);
+                    throw new Exception("Usuario no encontrado");
                 }
             }
-
-            return response()->json([
-                "ok" => false,
-                'message' => 'Credenciales incorrectas'
-            ], 401);
+            throw new Exception("Credenciales incorrectas");
     
         } catch (Exception $e) {
-            Log::error($e);
-            return response([
-                "ok" => false,
-                "message" => $e->getMessage()
-            ], 401);
+            return responseErrorController($e,401);
         }
     }
 
@@ -95,12 +84,7 @@ class AuthController extends Controller
                 $credentials = ['celular' => $number, 'password' => $data['password']];
             }
     
-            if (!$user) {
-                return response()->json([
-                    "ok" => false,
-                    'message' => 'El usuario no existe'
-                ], 401);
-            }
+            if (!$user) throw new Exception("El usuario no existe");
     
             // Intentar autenticar al usuario y guardar en la sesión
             if (Auth::attempt($credentials)) {
@@ -110,27 +94,15 @@ class AuthController extends Controller
                     // Encriptar la data antes de enviarla
                     return response()->json([
                         "ok" => true,
-                        'data' => $this->encriptarData($user_log)
+                        'data' => encriptarDataJson($user_log)
                     ]);
                 } else {
-                    return response()->json([
-                        "ok" => false,
-                        "message" => "Usuario no encontrado"
-                    ],401);
+                    throw new Exception("Usuario no encontrado");
                 }
             }
-    
-            return response()->json([
-                "ok" => false,
-                'message' => 'Credenciales incorrectas'
-            ], 401);
-    
+            throw new Exception("Credenciales incorrectas");
         } catch (Exception $e) {
-            Log::error($e);
-            return response()->json([
-                "ok" => false,
-                "message" => $e->getMessage()
-            ], 400);
+            return responseErrorController($e,401);
         }
     }
 
@@ -143,16 +115,11 @@ class AuthController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-
             return response()->json(["ok"=>true],200)
                 ->withCookie(cookie()->forget('XSRF-TOKEN')) // Eliminar token CSRF
                 ->withCookie(cookie()->forget('laravel_session')); // Eliminar sesión de Laravel
         } catch (Exception $e) {
-            Log::error($e);
-            return response()->json([
-                "ok" => false,
-                "message" => $e->getMessage()
-            ], 400);
+            return responseErrorController($e,400);
         }
     }
 
@@ -165,35 +132,15 @@ class AuthController extends Controller
                 // Encriptar la data antes de enviarla
                 return response()->json([
                     "ok" => true,
-                    'data' => $this->encriptarData($user)
+                    'data' => encriptarDataJson($user)
                 ]);
             } else {
-                return response()->json([
-                    "ok" => false,
-                    "message" => "Usuario no encontrado"
-                ],401);
+                throw new Exception("Usuario no encontrado");
             }
         }catch (Exception $e) {
-            Log::error($e);
-            return response([
-                "ok"=>false,
-                "message"=>$e->getMessage()
-            ],401);                 
+            return responseErrorController($e,401);
         }
     }
 
-    public function encriptarData($data_json){
-        $secretKey = env("SECRET_KEY_DATA"); // Debe ser de 32 caracteres
-        $cipher = 'AES-256-CBC';
-    
-        $data = json_encode($data_json); // Convertimos el usuario en JSON
-    
-        $key = hash('sha256', $secretKey, true); // Convertir clave a SHA-256 (32 bytes)
-        $iv = openssl_random_pseudo_bytes(16); // Generar IV de 16 bytes
-    
-        $encryptedData = openssl_encrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv);
-        
-        return base64_encode($iv . $encryptedData); // Concatenar IV + Datos encriptados y codificar en Base64
-    
-    }
+
 }
