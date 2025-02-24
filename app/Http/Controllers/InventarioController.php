@@ -8,6 +8,7 @@ use App\Services\FileService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class InventarioController extends Controller
@@ -18,7 +19,7 @@ class InventarioController extends Controller
     }
     public function upload_product(Request $request){
         try {
-
+            DB::beginTransaction();
             $usuario = Auth::user();
             $productos = [
                 "nombre"=>$request['nombre'],	
@@ -46,8 +47,10 @@ class InventarioController extends Controller
                 ];
             }
             ImagenProducto::insert($imagenes);
+            DB::commit();
             return response()->json(["ok"=>true],200);
         } catch (Exception $e) {
+            DB::rollBack();
             return responseErrorController($e);
         }
     }
