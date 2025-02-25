@@ -9,12 +9,12 @@ use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\ImageManager;
 class FileService
 {
-    public function saveImage($id_producto, $nombre,$base64){
+    public function saveImage($id_producto, $nombre,$image){
         try {
             $indexImage = count(Storage::disk('public')->allFiles("images/".$id_producto));
-            $extension = explode('/',explode(';',$base64)[0])[1];
-            $imageData = base64_decode(explode(',', $base64)[1]);
-
+            $extension = $image->extension;
+            $imageData = $image->image;
+            Log::info($imageData);
             // Inicializar ImageManager con GdDriver
             $manager = new ImageManager(new GdDriver());
             $image = $manager->read($imageData);
