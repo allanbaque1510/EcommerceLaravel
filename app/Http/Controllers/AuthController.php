@@ -142,5 +142,15 @@ class AuthController extends Controller
         }
     }
 
+    public function verificarToken(){
+        try {
+            $user = Auth::user();
+            if(!$user)throw new  Exception("No existe un usuario autenticado");
+            return response()->json(["ok"=>true],200);
+        } catch (Exception $e) {
+            return responseErrorController($e,401);
+        }
+    }
+
 
 }
