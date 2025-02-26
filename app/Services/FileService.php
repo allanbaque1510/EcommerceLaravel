@@ -14,7 +14,6 @@ class FileService
             $indexImage = count(Storage::disk('public')->allFiles("images/".$id_producto));
             $extension = $image->extension;
             $imageData = $image->image;
-            Log::info($imageData);
             // Inicializar ImageManager con GdDriver
             $manager = new ImageManager(new GdDriver());
             $image = $manager->read($imageData);

@@ -17,6 +17,22 @@ class InventarioController extends Controller
     public function __construct(FileService $fileService) {
         $this->fileService = $fileService;
     }
+
+    public function getProductos(){
+        try {   
+            $data = Producto::select(
+                "id",
+                "nombre as name",
+                "descripcion as description",
+                "url_image as img",
+                "precio as price",
+                'cantidad as inStock'
+            )->where('id_usuario',Auth::user()->id)->get();
+            return response()->json(['data'=>$data],200);
+        } catch (Exception $e) {
+            return responseErrorController($e);
+        }
+    }
     public function upload_product(Request $request){
         try {
             DB::beginTransaction();
@@ -43,7 +59,6 @@ class InventarioController extends Controller
                 "estado"=>1,
                 "id_usuario"=>$usuario->id,
             ];
-            Log::info($productos);
             $id_producto = Producto::insertGetId($productos);
             $urlThumbrl = $this->fileService->saveThumblr($id_producto,$arrayImage[0])->data;
             Producto::where('id',$id_producto)->update(['url_image'=>$urlThumbrl]);

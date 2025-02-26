@@ -15,6 +15,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/v',[AuthController::class,'verificarToken']);
     Route::get('/user', [AuthController::class, 'getUser']);
     Route::get('/logout', [AuthController::class,'cerrarSession']);
+    Route::get('/get_products_user', [InventarioController::class,'getProductos']);
     Route::post('/upload_product', [InventarioController::class,'upload_product']);
     
 });
