@@ -19,7 +19,6 @@ class InventarioController extends Controller
     }
     public function upload_product(Request $request){
         try {
-            throw new Exception("Debe subir un archivo valido");
             DB::beginTransaction();
             $arrayImage = [];
             foreach ($request['imagenes'] as $value) {
@@ -46,7 +45,7 @@ class InventarioController extends Controller
             ];
             Log::info($productos);
             $id_producto = Producto::insertGetId($productos);
-            $urlThumbrl = $this->fileService->saveThumblr($id_producto,$request['imagenes'][0])->data;
+            $urlThumbrl = $this->fileService->saveThumblr($id_producto,$arrayImage[0])->data;
             Producto::where('id',$id_producto)->update(['url_image'=>$urlThumbrl]);
             $imagenes = [];
             foreach ($arrayImage as  $image) {

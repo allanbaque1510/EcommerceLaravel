@@ -55,10 +55,10 @@ class FileService
         }
     }
 
-    public function saveThumblr($id_producto,$base64){
+    public function saveThumblr($id_producto,$imageInput){
         try {
-            $extension = explode('/',explode(';',$base64)[0])[1];
-            $imageData = base64_decode(explode(',', $base64)[1]);
+            $extension = $imageInput->extension;
+            $imageData = $imageInput->image;
 
             // Inicializar ImageManager con GdDriver
             $manager = new ImageManager(new GdDriver());
