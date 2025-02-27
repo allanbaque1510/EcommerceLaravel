@@ -18,7 +18,7 @@ class InventarioController extends Controller
         $this->fileService = $fileService;
     }
 
-    public function getProductos(){
+    public function index(){
         try {   
             $data = Producto::select(
                 "id",
@@ -33,7 +33,18 @@ class InventarioController extends Controller
             return responseErrorController($e);
         }
     }
-    public function upload_product(Request $request){
+
+    public function delete($id){
+        try {   
+            $data = Producto::where('id',$id)->where('id_usuario',Auth::user()->id)
+            ->upload(['estado'=>0]);
+            return response()->json(['data'=>$data],200);
+        } catch (Exception $e) {
+            return responseErrorController($e);
+        }
+    }
+
+    public function create(Request $request){
         try {
             DB::beginTransaction();
             $arrayImage = [];
