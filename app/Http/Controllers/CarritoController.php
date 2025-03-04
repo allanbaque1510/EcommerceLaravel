@@ -16,6 +16,14 @@ class CarritoController extends Controller
     }
     public function saveProductsCarrito(Request $request){
         try {
+            $request->validate([
+                'id' => 'required|integer',
+                'cantidad' => 'required|integer',
+            ],
+            [
+                'id.integer' => 'Error al ingresar el producto',
+                'cantidad.integer' => 'Error al ingresar el producto en el carrito',
+            ]);
             $isLogin =  Auth::check();
             if($isLogin) {
                 $saveProdUser = $this->carritoService->guardarProductoUsuario($request['id'], $request['cantidad']);
