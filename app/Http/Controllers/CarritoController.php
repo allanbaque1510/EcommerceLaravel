@@ -28,12 +28,11 @@ class CarritoController extends Controller
             if($isLogin) {
                 $saveProdUser = $this->carritoService->guardarProductoUsuario($request['id'], $request['cantidad']);
                 if(!$saveProdUser->ok) throw new Exception($saveProdUser->message);
+            }else{
+                $saveProductSession = $this->carritoService->guardarProductoSession($request['id'],$request['cantidad']);
+                if(!$saveProductSession->ok) throw new Exception($saveProductSession->message);
             }
-            
-            $saveProductSession = $this->carritoService->guardarProductoSession($request['id'],$request['cantidad']);
-            if(!$saveProductSession->ok) throw new Exception($saveProductSession->message);
-            
-            
+            return response()->json(['ok'=>true],200);            
         } catch (Exception $e) {
             return responseErrorController($e);
         }

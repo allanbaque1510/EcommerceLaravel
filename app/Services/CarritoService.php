@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Session;
 
 class CarritoService
 {
+    private $productService;
+    public function __construct(ProductService $productService) {
+        $this->productService = $productService;
+    }
     
     public function guardarProductoUsuario($id, $cantidad){
         try {
@@ -43,7 +47,7 @@ class CarritoService
                 'productos.id as id_producto',
                 'productos.descripcion as producto',
                 'productos.precio',
-                'productos.stock',
+                'productos.cantidad as stock',
                 'productos.estado as estado_producto',
             )
             ->join('carrito_items', 'carrito.id','carrito_items.id_carrito')
@@ -72,9 +76,15 @@ class CarritoService
             }else{
                 Session::put('carrito', $carrito);
             }
-            $carritoActualizado = Session::get('carrito');
-            return responseSuccessService($carritoActualizado);
-
+            $carritoSession = Session::get('carrito');
+            $idProductos = collect($carritoSession)->pluck('id');
+            $carritoActualizado = $this->productService->getInfoProductos($idProductos->toArray());
+            if(!$carritoActualizado->ok) throw new Exception($carritoActualizado->message);
+            $infoCarrito = $carritoActualizado->data;
+            foreach ($carritoSession as $value) {
+                $infoCarrito->where('id', $value['id'])->first()->cantidad = $value['cantidad'];
+            }
+            return responseSuccessService($infoCarrito);
         } catch (Exception $e) {
             return responseErrorService($e);
         }
